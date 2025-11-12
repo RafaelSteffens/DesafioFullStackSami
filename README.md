@@ -101,4 +101,4 @@ curl -X DELETE "https://desafiosami.test/api/people/1"
 - `database/migrations/*create_people_table.php` – schema da tabela `people`.
 - `database/factories/PersonFactory.php` e `database/seeders/PersonSeeder.php` – geração de dados.
 
-Fiquei muito feliz com a oportunidade e espero avançar nas próximas etapas e ser contratado, estou tão animado pois percebi que posso ajudar muito a  ami 
+Fiquei muito feliz com a oportunidade e espero avançar nas próximas etapas e ser contratado, estou tão animado pois percebi que posso ajudar muito a  Sami Sistemas

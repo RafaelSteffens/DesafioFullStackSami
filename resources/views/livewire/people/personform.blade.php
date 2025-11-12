@@ -8,7 +8,7 @@
         </p>
     </div>
 
-    <form wire:submit.prevent="create" class="rounded-lg bg-white p-6 shadow-sm">
+    <form wire:submit.prevent="save" class="rounded-lg bg-white p-6 shadow-sm">
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
                 <label class="mb-1 block text-sm font-medium text-zinc-700" for="nome">Nome</label>
