@@ -1,18 +1,21 @@
 <?php
 
+use App\Livewire\People\PersonForm;
+use App\Livewire\People\Index as PeopleIndex;
 use Illuminate\Support\Facades\Route;
-use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
-Route::get('/', function () {
-    return view('index');
-});
+Route::redirect('/', '/pessoas');
+// Route::get('/', function () {
+//     return view('index');
+// })->name('home');
 
-Route::middleware([
-    'auth',
-    ValidateSessionWithWorkOS::class,
-])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
-});
 
-// require __DIR__.'/settings.php';
-// require __DIR__.'/auth.php';
+Route::get('/pessoas', PeopleIndex::class)->name('people.index');
+Route::get('/pessoas/criar', PersonForm::class)->name('people.create');
+
+// Route::get('/pessoas/criar', function () {
+//     return view('livewire.people.form'); 
+// });
+
+
+Route::get('/pessoas/{person}/editar', PersonForm::class)->name('people.edit');
