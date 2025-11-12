@@ -4,7 +4,10 @@ namespace App\Livewire\People;
 use App\Models\Person;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Support\Formatters\CpfFormatter;
+use App\Services\PersonService;
+use App\Rules\CpfBr;
+use Illuminate\Validation\Rule;
 
 #[Layout('layouts.app')]
 class PersonForm extends Component
@@ -22,7 +25,7 @@ class PersonForm extends Component
 
     public function mount(): void
     {
-        $personId = request()->route('person');
+        $personId = request()->route('personId');
 
         if ($personId) {
             $this->person = Person::find($personId);
@@ -30,31 +33,37 @@ class PersonForm extends Component
             if ($this->person) {
                 $this->form = [
                     'nome'            => $this->person->nome ?? '',
-                    'cpf'             => $this->person->cpf ?? '',
-                    'data_nascimento' => optional($this->person->data_nascimento)?->format('Y-m-d') ?? '',
+                    'cpf'             => CpfFormatter::format($this->person->cpf) ?? $this->person->cpf,
+                    'data_nascimento' => optional($this->person->data_nascimento)->format('Y-m-d'),
                     'email'           => $this->person->email ?? '',
                     'telefone'        => $this->person->telefone ?? '',
                 ];
             }
         }
     }
-
-    // teste: cria sem validação e sem service
-    // app/Livewire/People/PersonForm.php
-    public function create()
+    protected function rules(): array
     {
-        $payload = $this->form;
+        $personId = $this->person?->id;
 
-        // 🔧 normalizações mínimas pra não quebrar
-        $payload['cpf'] = preg_replace('/\D+/', '', $payload['cpf'] ?? '');        // só dígitos
-        $payload['telefone'] = preg_replace('/(?!^\+)\D+/', '', $payload['telefone'] ?? '');
-        if (!empty($payload['data_nascimento'])) {
-            $payload['data_nascimento'] = \Carbon\Carbon::parse($payload['data_nascimento'])->format('Y-m-d');
+        return [
+            'form.nome' => ['required', 'string', 'max:255'],
+            'form.cpf' => ['required', 'string', new CpfBr(), Rule::unique('people', 'cpf')->ignore($personId)],
+            'form.data_nascimento' => ['required', 'date', 'before:today'],
+            'form.email' => ['required', 'string', 'lowercase', 'email:rfc,dns', 'max:255', Rule::unique('people', 'email')->ignore($personId)],
+            'form.telefone' => ['required', 'string', 'regex:/^[0-9+\-\s()]{10,20}$/'],
+        ];
+    }
+
+
+    public function save(PersonService $service)
+    {
+        if ($this->person) {
+            $service->update($this->person, $this->form);
+            session()->flash('status', 'Pessoa atualizada com sucesso.');
+        } else {
+            $this->person = $service->create($this->form);
+            session()->flash('status', 'Pessoa criada com sucesso.');
         }
-
-        Person::create($payload);
-        session()->flash('status', 'Criado (sem validação).');
-        $this->reset('form');
 
         return redirect()->route('people.index');
     }

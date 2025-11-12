@@ -18,4 +18,4 @@ Route::get('/pessoas/criar', PersonForm::class)->name('people.create');
 // });
 
 
-Route::get('/pessoas/{person}/editar', PersonForm::class)->name('people.edit');
+Route::get('/pessoas/{personId}/editar', PersonForm::class)->name('people.edit');
