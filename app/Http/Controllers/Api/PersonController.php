@@ -9,6 +9,8 @@ use App\Models\Person;
 use App\Services\PersonService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class PersonController extends Controller
 {
@@ -18,46 +20,100 @@ class PersonController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->integer('per_page', 3);
-        $perPage = max(1, min(3, $perPage));
+        try {
+            $perPage = (int) $request->integer('per_page', 3);
+            $perPage = max(1, min(3, $perPage));
 
-        $people = $this->service->paginate(
-            $request->string('q')->toString(),
-            $perPage
-        );
+            $people = $this->service->paginate(
+                $request->string('q')->toString(),
+                $perPage
+            );
 
-        return response()->json($people);
+            return response()->json($people);
+
+        } catch (Throwable $e) {
+            Log::error('Erro ao listar pessoas', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao buscar pessoas.',
+            ], 500);
+        }
     }
 
-
-    public function destroy(Person $person): JsonResponse
-    {
-        $result = $this->service->delete($person);
-
-        return response()->json($result);
-    }
-    
     public function store(PersonStoreRequest $request): JsonResponse
     {
-        $person = $this->service->create($request->validated());
-        return response()->json($person, 201);
-    }
+        try {
+            $person = $this->service->create($request->validated());
 
-    public function storeFromArray(array $data): Person
-    {
-        return $this->service->create($data);
+            return response()->json([
+                'success' => true,
+                'data'    => $person,
+            ], 201);
+
+        } catch (Throwable $e) {
+            Log::error('Erro ao criar pessoa', [
+                'input'   => $request->all(),
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao criar pessoa.',
+            ], 500);
+        }
     }
 
     public function update(PersonUpdateRequest $request, Person $person): JsonResponse
     {
-        $updated = $this->service->update($person, $request->validated());
-        return response()->json($updated);
+        try {
+            $updated = $this->service->update($person, $request->validated());
+
+            return response()->json([
+                'success' => true,
+                'data'    => $updated,
+            ]);
+
+        } catch (Throwable $e) {
+            Log::error('Erro ao atualizar pessoa', [
+                'person_id' => $person->id,
+                'input'     => $request->all(),
+                'message'   => $e->getMessage(),
+                'trace'     => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao atualizar pessoa.',
+            ], 500);
+        }
     }
 
-    public function updateFromArray(Person $person, array $data): Person
+    public function destroy(Person $person): JsonResponse
     {
-        return $this->service->update($person, $data);
+        try {
+            $this->service->delete($person);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Pessoa removida com sucesso.",
+            ]);
+
+        } catch (Throwable $e) {
+            Log::error('Erro ao deletar pessoa', [
+                'person_id' => $person->id ?? null,
+                'message'   => $e->getMessage(),
+                'trace'     => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao deletar pessoa.',
+            ], 500);
+        }
     }
-
-
 }
