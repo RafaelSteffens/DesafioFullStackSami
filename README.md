@@ -22,6 +22,12 @@ O sistema implementa um CRUD completo de Pessoas contendo os campos:
 
 ---
 
+## Clone o repositório
+
+```bash
+git clone https://github.com/RafaelSteffens/DesafioFullStackSami.git
+```
+
 ## Como Rodar com Laravel Herd 
 
 Siga os passos abaixo para executar o projeto usando o Laravel Herd, conforme solicitado no desafio.
