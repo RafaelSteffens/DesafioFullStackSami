@@ -100,7 +100,7 @@ class PersonForm extends Component
                 'trace'   => $e->getTraceAsString(),
             ]);
 
-            // $this->dispatch('form-error', 'Ocorreu um erro ao salvar a pessoa. Tente novamente.');
+            $this->dispatch('form-error', 'Ocorreu um erro ao salvar a pessoa. Tente novamente.');
         }
     }
 
