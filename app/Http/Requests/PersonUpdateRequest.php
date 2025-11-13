@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Person;
-use App\Rules\CpfBr;
+use App\Services\CpfServices\CpfBr;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

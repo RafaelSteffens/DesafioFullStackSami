@@ -26,10 +26,6 @@ class Index extends Component
 
     protected string $paginationTheme = 'tailwind';
 
-    // public function updatingQ(): void
-    // {
-    //     $this->resetPage();
-    // }
 
     public function deletePerson(int $personId, PersonController $personController): void
     {

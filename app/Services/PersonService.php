@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Person;
 use Illuminate\Container\Attributes\Log;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use PhpParser\Node\Stmt\TryCatch;
+
 
 class PersonService
 {
@@ -36,9 +36,21 @@ class PersonService
      */
     public function create(array $data): Person
     {
-        $normalized = $this->normalizeData($data);
-        return Person::create($normalized);
+        try {
+            $normalized = $this->normalizeData($data);
+            return Person::create($normalized);
+
+        } catch (\Exception $e) {
+            Log::error('Erro ao criar pessoa: ' . $e->getMessage());
+
+            return [
+                'success' => false,
+                'message' => 'Erro ao deletar pessoa.',
+                'error'   => $e->getMessage()
+            ];
+        }
     }
+    
 
     /**
      * Atualiza e retorna o model atualizado.
@@ -46,9 +58,20 @@ class PersonService
      */
     public function update(Person $person, array $data): Person
     {
-        $normalized = $this->normalizeData($data);
-        $person->update($normalized);
-        return $person->refresh();
+        try {
+            $normalized = $this->normalizeData($data);
+            $person->update($normalized);
+            return $person->refresh();
+
+        } catch (\Exception $e) {
+            Log::error('Erro ao atualizar pessoa: ' . $e->getMessage());
+
+            return [
+                'success' => false,
+                'message' => 'Erro ao deletar pessoa.',
+                'error'   => $e->getMessage()
+            ];
+        }
     }
 
 

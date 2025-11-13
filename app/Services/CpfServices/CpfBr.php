@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Rules;
+namespace App\Services\CpfServices;
 
 use Illuminate\Contracts\Validation\Rule;
 
