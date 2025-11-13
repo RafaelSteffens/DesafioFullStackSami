@@ -34,11 +34,9 @@ Siga os passos abaixo para executar o projeto usando o Laravel Herd, conforme so
 
 1. Abra o projeto no Herd
 
-  -Abra o Herd
+2. Clique em “Add Project”
 
-  -Clique em “Add Project”
-
-  -Selecione a pasta clonada deste repositório
+3. Selecione a pasta clonada deste repositório
 
 O Herd irá gerar automaticamente um domínio no formato:
 
