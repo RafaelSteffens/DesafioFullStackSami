@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Person;
+use Illuminate\Container\Attributes\Log;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use PhpParser\Node\Stmt\TryCatch;
 
 class PersonService
 {
@@ -49,16 +51,33 @@ class PersonService
         return $person->refresh();
     }
 
-    /**
-     * Exclui o registro.
-     */
-    public function delete(Person $person): void
+
+
+
+    public function delete(Person $person): array
     {
-        $person->delete();
+        try {
+            $nome = $person->nome;
+            $person->delete();
+
+            return [
+                'success' => true,
+                'message' => "Usuário {$nome} deletado com sucesso."
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('Erro ao deletar pessoa: ' . $e->getMessage());
+
+            return [
+                'success' => false,
+                'message' => 'Erro ao deletar pessoa.',
+                'error'   => $e->getMessage()
+            ];
+        }
     }
 
+
     /**
-     * Normaliza campos antes de persistir.
      * @param array<string,mixed> $data
      * @return array<string,mixed>
      */
@@ -67,10 +86,8 @@ class PersonService
         return [
             'nome'             => trim((string) ($data['nome'] ?? '')),
             'cpf'              => preg_replace('/\D/', '', (string) ($data['cpf'] ?? '')),
-            // aqui assumimos que já vem em Y-m-d do componente; se vier vazio, salva null
             'data_nascimento'  => ($data['data_nascimento'] ?? '') !== '' ? (string) $data['data_nascimento'] : null,
             'email'            => mb_strtolower(trim((string) ($data['email'] ?? ''))),
-            // mantém só + e dígitos; remove espaços e símbolos
             'telefone'         => preg_replace('/(?!^\+)\D+/', '', (string) ($data['telefone'] ?? '')),
         ];
     }

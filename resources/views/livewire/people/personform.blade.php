@@ -89,7 +89,7 @@
         <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
             <a
                 href="{{ route('people.index') }}"
-                class="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+                class="mt-9 inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
             >
                 Cancelar
             </a>
@@ -107,4 +107,12 @@
         </div>
     </form>
   </div>
+  <script>
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('form-error', (message) => {
+                alert('Erro ao salvar: ' + message);
+            });
+        });
+    </script>
+
 </div>
