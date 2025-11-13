@@ -5,9 +5,9 @@ use App\Http\Controllers\Api\PersonController;
 use App\Models\Person;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use App\Support\Formatters\CpfFormatter;
+use App\Services\CpfServices\CpfFormatter;
 use App\Services\PersonService;
-use App\Rules\CpfBr;
+use App\Services\CpfServices\CpfBr;
 use Illuminate\Validation\Rule;
 
 #[Layout('layouts.app')]

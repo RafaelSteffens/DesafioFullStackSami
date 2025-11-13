@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Formatters;
+namespace App\Services\CpfServices;
 
 class CpfFormatter
 {
