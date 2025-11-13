@@ -20,16 +20,16 @@
 
         <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6">
             <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-                <div class="w-full sm:max-w-xs">
+                <!-- <div class="w-full sm:max-w-xs">
                     <label for="search" class="block text-sm font-medium">Busca</label>
                     <input id="search" type="search" placeholder="Nome, email ou CPF"
                            wire:model.live.debounce.500ms="q"
                            class="mt-1 w-full rounded-md border px-3 py-2 text-sm">
-                </div>
+                </div> -->
                 <div>
-                    <span class="text-xs">Registros</span>
-                    <div class="inline-block text-sm font-semibold border px-2 py-0.5 rounded-full">
-                        {{ $people->total() }} encontrados
+                    
+                    <div class="">
+                        {{ $people->total() }} Registros encontrados
                     </div>
                 </div>
             </div>

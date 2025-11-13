@@ -45,11 +45,11 @@ https://desafiosami.test
 
 Em seguida, abra o terminal dentro do projeto e execute:
 ```bash
-docker up -d --build
+docker up  --build
 composer install
 npm install
+npm run build
 npm run dev
-cp .env.example .env
 php artisan key:generate
 php artisan migrate --seed
 ```
