@@ -3,15 +3,10 @@
 namespace App\Services;
 
 use App\Models\Person;
-use Illuminate\Container\Attributes\Log;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-
 
 class PersonService
 {
-    /**
-     * Lista paginada com filtro opcional.
-     */
     public function paginate(?string $query = null, int $perPage = 10): LengthAwarePaginator
     {
         $term = trim((string) $query);
@@ -31,74 +26,31 @@ class PersonService
     }
 
     /**
-     * Cria uma pessoa normalizando os dados.
      * @param array<string,mixed> $data
      */
     public function create(array $data): Person
     {
-        try {
-            $normalized = $this->normalizeData($data);
-            return Person::create($normalized);
+        $normalized = $this->normalizeData($data);
 
-        } catch (\Exception $e) {
-            Log::error('Erro ao criar pessoa: ' . $e->getMessage());
-
-            return [
-                'success' => false,
-                'message' => 'Erro ao deletar pessoa.',
-                'error'   => $e->getMessage()
-            ];
-        }
+        return Person::create($normalized);
     }
-    
 
     /**
-     * Atualiza e retorna o model atualizado.
      * @param array<string,mixed> $data
      */
     public function update(Person $person, array $data): Person
     {
-        try {
-            $normalized = $this->normalizeData($data);
-            $person->update($normalized);
-            return $person->refresh();
+        $normalized = $this->normalizeData($data);
 
-        } catch (\Exception $e) {
-            Log::error('Erro ao atualizar pessoa: ' . $e->getMessage());
+        $person->update($normalized);
 
-            return [
-                'success' => false,
-                'message' => 'Erro ao deletar pessoa.',
-                'error'   => $e->getMessage()
-            ];
-        }
+        return $person->refresh();
     }
 
-
-
-
-    public function delete(Person $person): array
+    public function delete(Person $person): void
     {
-        try {
-            $nome = $person->nome;
-            $person->delete();
-
-            return [
-                'success' => true,
-                'message' => "Usuário {$nome} deletado com sucesso."
-            ];
-
-        } catch (\Exception $e) {
-            Log::error('Erro ao deletar pessoa: ' . $e->getMessage());
-
-            return [
-                'success' => false,
-                'message' => 'Erro ao deletar pessoa.',
-                'error'   => $e->getMessage()
-            ];
-        }
+        $person->delete();
     }
-
 
     /**
      * @param array<string,mixed> $data
@@ -109,7 +61,9 @@ class PersonService
         return [
             'nome'             => trim((string) ($data['nome'] ?? '')),
             'cpf'              => preg_replace('/\D/', '', (string) ($data['cpf'] ?? '')),
-            'data_nascimento'  => ($data['data_nascimento'] ?? '') !== '' ? (string) $data['data_nascimento'] : null,
+            'data_nascimento'  => ($data['data_nascimento'] ?? '') !== '' 
+                ? (string) $data['data_nascimento'] 
+                : null,
             'email'            => mb_strtolower(trim((string) ($data['email'] ?? ''))),
             'telefone'         => preg_replace('/(?!^\+)\D+/', '', (string) ($data['telefone'] ?? '')),
         ];

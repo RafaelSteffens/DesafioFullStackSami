@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   mysql:
     image: mysql:8.0
@@ -21,6 +23,29 @@ services:
       - "8081:80"
     depends_on:
       - mysql
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-backend
+    depends_on:
+      - mysql
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+
+      # Mesmos dados do banco que você já está usando
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+
+    ports:
+      - "8000:8000"
 
 volumes:
   mysql_data:

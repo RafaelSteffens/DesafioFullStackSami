@@ -2,13 +2,14 @@
 
 namespace App\Livewire\People;
 
-use App\Http\Controllers\Api\PersonController;
 use App\Models\Person;
 use App\Services\PersonService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Throwable;
 
 #[Layout('layouts.app')]
 class Index extends Component
@@ -26,24 +27,32 @@ class Index extends Component
 
     protected string $paginationTheme = 'tailwind';
 
-
-    public function deletePerson(int $personId, PersonController $personController): void
+    public function deletePerson(int $personId, PersonService $personService): void
     {
-        $person = Person::findOrFail($personId);
+        try {
+            $person = Person::findOrFail($personId);
 
-        $personController->destroy($person);
+            $personService->delete($person);
 
-        session()->flash('status', 'Pessoa removida com sucesso.');
-        $this->resetPage();
+            session()->flash('status', 'Pessoa removida com sucesso.');
+            $this->resetPage();
+        } catch (Throwable $e) {
+            Log::error('Erro ao remover pessoa', [
+                'person_id' => $personId,
+                'message'   => $e->getMessage(),
+                'trace'     => $e->getTraceAsString(),
+            ]);
+
+            session()->flash('error', 'Ocorreu um erro ao remover a pessoa.');
+        }
     }
 
-    public function render(PersonService $service): \Illuminate\View\View
+    public function render(PersonService $personService): View
     {
-        $people = $service->paginate($this->q, $this->perPage);
+        $people = $personService->paginate($this->q, $this->perPage);
 
         return view('livewire.people.index', [
             'people' => $people,
         ]);
     }
-
 }

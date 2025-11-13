@@ -1,14 +1,16 @@
 <?php
+
 namespace App\Livewire\People;
 
-use App\Http\Controllers\Api\PersonController;
 use App\Models\Person;
-use Livewire\Attributes\Layout;
-use Livewire\Component;
 use App\Services\CpfServices\CpfFormatter;
 use App\Services\PersonService;
 use App\Services\CpfServices\CpfBr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Throwable;
 
 #[Layout('layouts.app')]
 class PersonForm extends Component
@@ -22,7 +24,6 @@ class PersonForm extends Component
         'email' => '',
         'telefone' => '',
     ];
-
 
     public function mount(): void
     {
@@ -42,6 +43,7 @@ class PersonForm extends Component
             }
         }
     }
+
     protected function rules(): array
     {
         $personId = $this->person?->id;
@@ -52,8 +54,6 @@ class PersonForm extends Component
                 'required',
                 'string',
                 new CpfBr(),
-
-                // regra de unicidade customizada
                 function (string $attribute, mixed $value, \Closure $fail) use ($personId) {
                     $cpfNumero = preg_replace('/\D/', '', (string) $value);
 
@@ -80,28 +80,29 @@ class PersonForm extends Component
         ];
     }
 
-    public function save(PersonController $personController)
+    public function save(PersonService $personService)
     {
-        $this->validate(); 
+        $this->validate();
 
         try {
             if ($this->person) {
-                $personController->updateFromArray($this->person, $this->form);
+                $personService->update($this->person, $this->form);
             } else {
-                $this->person = $personController->storeFromArray($this->form);
+                $this->person = $personService->create($this->form);
             }
 
+            session()->flash('status', 'Pessoa salva com sucesso.');
+
             return redirect()->route('people.index');
-
         } catch (Throwable $e) {
-            Log::error('Erro ao salvar pessoa: ' . $e->getMessage());
+            Log::error('Erro ao salvar pessoa', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
 
-            $this->dispatch('form-error', $e->getMessage());
-            return;
+            // $this->dispatch('form-error', 'Ocorreu um erro ao salvar a pessoa. Tente novamente.');
         }
     }
-
-        
 
     public function render()
     {
