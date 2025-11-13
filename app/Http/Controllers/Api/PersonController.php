@@ -18,8 +18,8 @@ class PersonController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $perPage = (int) $request->integer('per_page', 10);
-        $perPage = max(1, min(50, $perPage));
+        $perPage = (int) $request->integer('per_page', 3);
+        $perPage = max(1, min(3, $perPage));
 
         $people = $this->service->paginate(
             $request->string('q')->toString(),
@@ -29,24 +29,35 @@ class PersonController extends Controller
         return response()->json($people);
     }
 
+
+    public function destroy(Person $person): JsonResponse
+    {
+        $result = $this->service->delete($person);
+
+        return response()->json($result);
+    }
+    
     public function store(PersonStoreRequest $request): JsonResponse
     {
         $person = $this->service->create($request->validated());
-
         return response()->json($person, 201);
+    }
+
+    public function storeFromArray(array $data): Person
+    {
+        return $this->service->create($data);
     }
 
     public function update(PersonUpdateRequest $request, Person $person): JsonResponse
     {
         $updated = $this->service->update($person, $request->validated());
-
         return response()->json($updated);
     }
 
-    public function destroy(Person $person): JsonResponse
+    public function updateFromArray(Person $person, array $data): Person
     {
-        $this->service->delete($person);
-
-        return response()->noContent();
+        return $this->service->update($person, $data);
     }
+
+
 }

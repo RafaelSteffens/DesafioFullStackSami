@@ -2,6 +2,7 @@
 
 namespace App\Livewire\People;
 
+use App\Http\Controllers\Api\PersonController;
 use App\Models\Person;
 use App\Services\PersonService;
 use Illuminate\View\View;
@@ -16,7 +17,7 @@ class Index extends Component
 
     public string $q = '';
 
-    public int $perPage = 10;
+    public int $perPage = 3;
 
     protected array $queryString = [
         'q' => ['except' => ''],
@@ -25,15 +26,16 @@ class Index extends Component
 
     protected string $paginationTheme = 'tailwind';
 
-    public function updatingQ(): void
-    {
-        $this->resetPage();
-    }
+    // public function updatingQ(): void
+    // {
+    //     $this->resetPage();
+    // }
 
-    public function deletePerson(int $personId, PersonService $service): void
+    public function deletePerson(int $personId, PersonController $personController): void
     {
         $person = Person::findOrFail($personId);
-        $service->delete($person);
+
+        $personController->destroy($person);
 
         session()->flash('status', 'Pessoa removida com sucesso.');
         $this->resetPage();
