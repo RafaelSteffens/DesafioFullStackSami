@@ -47,6 +47,11 @@ class Index extends Component
         }
     }
 
+    public function updatingQ()
+    {
+        $this->resetPage();
+    }
+
     public function render(PersonService $personService): View
     {
         $people = $personService->paginate($this->q, $this->perPage);
