@@ -1,6 +1,6 @@
 <div class="space-y-6" wire:loading.class="opacity-60">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <header class="w-full bg-gray-500">
+    <div class="w-full ">
+        <header class="w-full bg-blue-900">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <img src="/logo-sami.png" alt="Logo Sami Sistemas" style="height: 200px; width: 200px; margin-left: 15%;">
@@ -8,7 +8,7 @@
                 </div>
 
                 <a href="{{ route('people.create') }}"
-                   class="inline-flex items-center gap-2 rounded-lg bg-black/10 px-4 py-2 text-sm font-semibold text-black"
+                   class="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-black"
                    style="margin-right: 15%;">
                    <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
@@ -29,7 +29,7 @@
                 <div>
                     
                     <div class="">
-                        {{ $people->total() }} Registros encontrados
+                        {{ $people->total() }} Registros Encontrados
                     </div>
                 </div>
             </div>

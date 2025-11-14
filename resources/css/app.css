@@ -1,6 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@source "../**/*.blade.php";
+@source "../js/**/*.js";
+@source "../js/**/*.vue";
+/* demais imports/customizações */
+
 
 /* aqui embaixo você pode ter css custom */
 body {
